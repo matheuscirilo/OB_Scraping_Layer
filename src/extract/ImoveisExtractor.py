@@ -47,7 +47,7 @@ class ImoveisExtractor:
                     'qtde_quartos': qtde_quartos,
                     'qtde_banheiros': qtde_banheiros,
                     'qtde_vagas': qtde_vagas,
-                    'suite': qtde_suite,
+                    'qtde_suite': qtde_suite,
                     'area_total': area_total,
                     'area_privativa': area_privativa,
                     'data_extracao': data_extracao
@@ -86,7 +86,8 @@ class ImoveisExtractor:
             return []
 
     def save_to_jsonl(self, data):
-        file_path = '../extract/data/imoveis_casa_feliz.jsonl'
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(base_dir, '..', 'data', 'imoveis_casa_feliz.jsonl')
         diretorio = os.path.dirname(file_path)
         if not os.path.exists(diretorio):
             os.makedirs(diretorio)

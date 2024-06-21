@@ -1,4 +1,4 @@
-from src.load.database_handler import DatabaseHandler
+from src.load.database_connection import MySQLDatabase
 from src.transform.data_processing import ImoveisDataProcessor
 from src.extract.ImoveisExtractor import ImoveisExtractor
 
@@ -17,16 +17,20 @@ if __name__ == "__main__":
 
     # Salvando os dados em um arquivo JSONL
     extractor.save_to_jsonl(dados_imoveis)
-
-    print('EXTRACT TERMINADO')
     
     #TRANSFORM
 
     # Instanciar ImoveisDataProcessor
     processor = ImoveisDataProcessor()
     df = processor.load_data_from_jsonl()
-
-    print('TRANSFORM TERMINADO')
+    df_processado = processor.process_data(df)
 
     # LOAD
+    
+    db = MySQLDatabase()
+    db.insert_data(df_processado)
+    db.close_connection()
+    
+
+
 
