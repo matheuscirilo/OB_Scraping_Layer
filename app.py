@@ -30,6 +30,8 @@ if __name__ == "__main__":
     db = MySQLDatabase()
     db.insert_data(df_processado)
     db.close_connection()
+
+    # DASHBOARD
     
 
 

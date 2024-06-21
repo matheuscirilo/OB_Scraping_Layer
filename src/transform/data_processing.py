@@ -9,7 +9,15 @@ class ImoveisDataProcessor:
    
     def process_data(self, df) -> pd.DataFrame:
         df['codigo'] = df['codigo'].str.replace(r'^Cód: ', '', regex=True)
+
         df['titulo'] = df['titulo'].str.split().str[0].str.lower()
+
+        
+
+
+
+
+
         df['status'] = df['status'].str.replace(r'^- ', '', regex=True)
 
         df[['bairro', 'cidade', 'estado']] = df['localidade'].str.split(r'[-/]', expand=True)

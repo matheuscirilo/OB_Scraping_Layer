@@ -72,6 +72,17 @@ class MySQLDatabase:
         finally:
             cursor.close()
     
+    def fetch_data(self, query):
+        if self.conn is not None and self.conn.is_connected():
+            try:
+                return pd.read_sql(query, self.conn)
+            except mysql_connector.Error as e:
+                print(f"Error: {e}")
+                return None
+        else:
+            print("No active connection")
+            return None
+    
 
         
     
