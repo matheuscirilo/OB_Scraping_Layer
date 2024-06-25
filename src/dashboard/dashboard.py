@@ -28,31 +28,22 @@ def main():
     db = MySQLDatabase()
 
     # Buscar dados do banco de dados
-    if db.conn:
-        query = "SELECT * FROM casa_feliz_imobiliaria"
-        df = db.fetch_data(query)
-        db.close_connection()
+    query = "SELECT * FROM casa_feliz_imobiliaria"
+    df = db.fetch_data(query)
 
-        if df is not None:
-            # Qual o preço médio por marca
-            st.subheader('Preço médio por bairro')
-            status_filtro = st.radio("Filtrar por status:", df['status'].unique())
-            titulo_filtro = st.radio("filtrar por tipo:", df['titulo'].unique(), horizontal=True)
-            df_filtrado = df[(df['status'] == status_filtro) & (df['titulo'] == titulo_filtro)]
-            average_price_by_bairro = calcular_preco_medio_por_bairro(df_filtrado)
-            col1, col2 = st.columns([4, 2])
-            col1.bar_chart(average_price_by_bairro)
-            col2.write(average_price_by_bairro)
-            
-            
-            st.map()
+    if df is not None:
+        # Qual o preço médio por marca
+        st.subheader('Preço médio por bairro')
+        status_filtro = st.radio("Filtrar por status:", df['status'].unique())
+        titulo_filtro = st.radio("filtrar por tipo:", df['titulo'].unique(), horizontal=True)
+        df_filtrado = df[(df['status'] == status_filtro) & (df['titulo'] == titulo_filtro)]
+        average_price_by_bairro = calcular_preco_medio_por_bairro(df_filtrado)
+        col1, col2 = st.columns([4, 2])
+        col1.bar_chart(average_price_by_bairro, horizontal=True)
+        col2.write(average_price_by_bairro)         
 
-
-
-        else:
-            st.error("Falha ao buscar os dados do banco de dados")
     else:
-        st.error(f"Falha ao conectar ao banco de dados")
+        st.error("Falha ao buscar os dados do banco de dados")
 
 if __name__ == "__main__":
     main()

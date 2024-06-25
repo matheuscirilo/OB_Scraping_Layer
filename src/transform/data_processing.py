@@ -1,22 +1,28 @@
 import os
 import pandas as pd
 import json
-from sqlalchemy import create_engine
 
 class ImoveisDataProcessor:
     def __init__(self):
         pass
    
     def process_data(self, df) -> pd.DataFrame:
+        df.fillna({
+            'codigo': '',
+            'titulo': '',
+            'status': '',
+            'localidade': '',
+            'area_total': '0',
+            'area_privativa': '0',
+            'preco': '0',
+            'bairro': '',
+            'cidade': '',
+            'estado': '',
+        }, inplace=True)
+
         df['codigo'] = df['codigo'].str.replace(r'^Cód: ', '', regex=True)
 
         df['titulo'] = df['titulo'].str.split().str[0].str.lower()
-
-        
-
-
-
-
 
         df['status'] = df['status'].str.replace(r'^- ', '', regex=True)
 
