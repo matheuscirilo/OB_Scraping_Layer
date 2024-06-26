@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS casa_feliz_imobiliaria (
     qtde_suite INT,
     area_total_m2 DECIMAL(10, 2),
     area_privativa DECIMAL(10, 2),
-    data_extracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    data_extracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    lat FLOAT,
+    lng FLOAT
 ) ENGINE=INNODB;
 

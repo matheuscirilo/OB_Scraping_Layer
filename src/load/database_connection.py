@@ -31,7 +31,7 @@ class MySQLDatabase:
         required_columns = [
             "codigo", "titulo", "status", "preco", "bairro",
             "cidade", "estado", "qtde_quartos", "qtde_banheiros",
-            "qtde_vagas", "qtde_suite", "area_total_m2", "area_privativa", "data_extracao"
+            "qtde_vagas", "qtde_suite", "area_total_m2", "area_privativa", "data_extracao", "lat", "lng"
         ]
 
         if not all(col in df.columns for col in required_columns):
@@ -49,7 +49,6 @@ class MySQLDatabase:
             print(f"Error: {e}")
         finally:
             self._engine.dispose()
-            print("Connection closed")
         
     def fetch_data(self, query: str) -> pd.DataFrame:
         try:

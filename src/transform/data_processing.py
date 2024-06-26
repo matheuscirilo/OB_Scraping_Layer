@@ -1,12 +1,41 @@
 import os
+import googlemaps
 import pandas as pd
 import json
+from dotenv import dotenv_values
+
+# Para depuração, carregar e imprimir as variáveis do .env
+env_vars = dotenv_values(".env")
 
 class ImoveisDataProcessor:
     def __init__(self):
-        pass
-   
-    def process_data(self, df) -> pd.DataFrame:
+        self._key = env_vars.get("KEY")
+        self._df = self.load_data_from_jsonl()
+
+    def geocodingbairro(self, localidade):
+        # Inicializa o cliente Google Maps com a chave de API fornecida
+        gmaps = googlemaps.Client(key=self._key)
+
+        try:
+            # Geocodifica o endereço
+            geocode_result = gmaps.geocode(localidade)
+        
+            # Verifica se a geocodificação retornou algum resultado
+            if geocode_result:
+                location = geocode_result[0]['geometry']['location']
+                lat = location['lat']
+                lng = location['lng']
+                return lat, lng
+            else:
+                print(f"Endereço: {localidade} -> Não encontrado")
+                return "", ""
+        except Exception as e:
+            print(f"Erro ao geocodificar {localidade}: {e}")
+            return "", ""
+        
+
+    def process_data(self) -> pd.DataFrame:
+        df = self._df
         df.fillna({
             'codigo': '',
             'titulo': '',
@@ -25,6 +54,16 @@ class ImoveisDataProcessor:
         df['titulo'] = df['titulo'].str.split().str[0].str.lower()
 
         df['status'] = df['status'].str.replace(r'^- ', '', regex=True)
+
+        # Adicionar colunas de latitude e longitude
+        df['lat'] = None
+        df['lng'] = None
+
+        # Chame a função geocodingbairro para cada localidade
+        for index, row in df.iterrows():
+            lat, lng = self.geocodingbairro(row['localidade'])
+            df.at[index, 'lat'] = lat
+            df.at[index, 'lng'] = lng
 
         df[['bairro', 'cidade', 'estado']] = df['localidade'].str.split(r'[-/]', expand=True)
         df.drop(columns= ['localidade'], inplace=True)

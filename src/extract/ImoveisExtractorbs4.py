@@ -5,9 +5,9 @@ import datetime
 import os
 
 class ImoveisExtractor:
-    def __init__(self, url, headers=None):
-        self.url = url
-        self.headers = headers or {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"}
+    def __init__(self):
+        self.url = 'https://casafelizimoveis.com.br/busca/?pagina=1'
+        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"}
         self.data = []
 
     def proxima_pagina(self, soup):
@@ -78,12 +78,11 @@ class ImoveisExtractor:
                 self.url = self.proxima_pagina(soup)
                 if self.url is None:
                     break 
-
-            return dados_imoveis
+            
+            self.save_to_jsonl(dados_imoveis)
 
         except requests.RequestException as e:
             print(f"Erro ao fazer a requisição para '{self.url}': {e}")
-            return []
 
     def save_to_jsonl(self, data):
         base_dir = os.path.dirname(os.path.abspath(__file__))

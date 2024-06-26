@@ -20,6 +20,13 @@ def calcular_preco_medio_por_bairro(df):
 
     return average_price_by_bairro
 
+def ajustaZoon(df: pd.DataFrame):
+
+    if len(df) <=1:
+        return 15   
+    else:
+        return 13
+
 # Função principal do Streamlit
 def main():
     st.title("Dashboard de Imóveis")
@@ -32,15 +39,27 @@ def main():
     df = db.fetch_data(query)
 
     if df is not None:
+        
+        df['data_extracao'] = pd.to_datetime(df['data_extracao'], format='%Y%m%d')
+ 
+        # ordenar pela coluna Data em ordem crescente
+        df.sort_values('data_extracao', ascending=True, inplace=True)
+        
+        col1, col2 = st.columns(2)
+        col1.metric(label="Número Total de casas", value=len(df['codigo'].unique()))
+        col2.metric(label="última atualização", value=str(df['data_extracao'][0]))
+
+     
         # Qual o preço médio por marca
         st.subheader('Preço médio por bairro')
-        status_filtro = st.radio("Filtrar por status:", df['status'].unique())
-        titulo_filtro = st.radio("filtrar por tipo:", df['titulo'].unique(), horizontal=True)
+        col1, col2 = st.columns(2) # Primeira linha com duas colunas      
+        status_filtro = col1.radio("Filtrar por status:", df['status'].unique())
+        titulo_filtro = col2.radio("filtrar por tipo:", df['titulo'].unique(), horizontal=True)
         df_filtrado = df[(df['status'] == status_filtro) & (df['titulo'] == titulo_filtro)]
         average_price_by_bairro = calcular_preco_medio_por_bairro(df_filtrado)
-        col1, col2 = st.columns([4, 2])
-        col1.bar_chart(average_price_by_bairro, horizontal=True)
-        col2.write(average_price_by_bairro)         
+        st.line_chart(average_price_by_bairro)
+
+        st.map(df_filtrado, latitude='lat', longitude='lng', zoom=ajustaZoon(df_filtrado))         
 
     else:
         st.error("Falha ao buscar os dados do banco de dados")
